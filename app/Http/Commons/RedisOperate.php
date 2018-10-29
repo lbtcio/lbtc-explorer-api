@@ -13,8 +13,8 @@ class RedisOperate
 {
 
     const redis_host = '127.0.0.1';
-    const redis_port = '38888';
-    const redis_auth = 'chain+000919gwyj';
+    const redis_port = '*';
+    const redis_auth = '*';
 
     public function RedisGet($params)
     {
