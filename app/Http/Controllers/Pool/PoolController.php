@@ -146,7 +146,7 @@ class PoolController extends BaseController
         $blockInt = $blockCount['result'];
         $blockRedis = $redis->RedisGet('blockcountnew2');
 
-        //确认块高累计增加
+        //blockcount increase
         if($blockRedis){
             if($blockInt > $blockRedis){
                 $redis->RedisSet('blockcountnew2',$blockInt);
@@ -440,9 +440,9 @@ class PoolController extends BaseController
         foreach ($addrArray as $aKey => $aVal){
             $nodeFlag = $nodeFlag + 1;
             if($temp2[$aVal]['now'] === '1' && $temp2[$aVal]['address'] != $lastAddr){
-                //当前状态修改为0
+                //status 0
                 $temp2[$aVal]['now'] = 0;
-                //把下一地址修改为1
+                //status 1
                 $temp2[$addrArray[$aKey+1]]['now'] = 1;
             }
 
