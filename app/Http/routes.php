@@ -59,7 +59,32 @@ $app->group(['namespace' => 'App\Http\Controllers\Block'], function() use ($app)
 
     $app->get('newsetblockcount', 'BlockController@SetBlockCount');
 
+
     $app->get('getblockcount', 'BlockController@GetBlockCount');
+
+    //GetTokenInfo
+    $app->get('gettokeninfo','BlockController@GetTokenInfo');
+
+    //GetTokenBalance
+    $app->get('gettokenbalance','BlockController@GetTokenBalance');
+
+    //SetOwenToToken
+    $app->get('setowentotoken','BlockController@SetOwenToToken');
+
+    //SetTokenToOwen
+    $app->get('settokentoowen','BlockController@SetTokenToOwen');
+
+    //GetTokenOrOwner
+    $app->get('gettokenorowner','BlockController@GetTokenOrOwner');
+
+    //getaddressname
+    $app->get('getaddressname','BlockController@GetAddressName');
+
+    //getnameaddress
+    $app->get('getnameaddress','BlockController@GetNameAddress');
+
+    //getaddresstokentxids
+    $app->get('getaddresstokentxids','BlockController@GetAddressTokenTxids');
 
 });
 

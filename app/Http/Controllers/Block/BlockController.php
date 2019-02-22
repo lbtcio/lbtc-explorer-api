@@ -1063,6 +1063,325 @@ class BlockController extends BaseController
         return $redisBlockCount;
     }
 
+
+    //GetTokenInfo
+    public function GetTokenInfo(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $param = trim($request->input('param'));
+
+        if ($param){
+            $paramLen = strlen($param);
+            if($paramLen < 26 || $paramLen > 34){
+                return json_encode(array('error'=>1,'msg'=>'Addr Format Error!'));
+            }
+
+            $curlOperate = new CurlOperate();
+
+            $response = $curlOperate->GetTokenInfo($param);
+
+            $responseArray = json_decode($response,1);
+
+            //判断请求是否发生错误
+            if(array_key_exists('msg',$responseArray)){
+                return json_encode(array('error'=>1,'msg'=>$responseArray['msg']));
+            }
+
+            $res = $responseArray['result'];
+
+            return json_encode(array('error'=>0,'msg'=>$res));
+
+        }else{
+            $curlOperate = new CurlOperate();
+
+            $response = $curlOperate->GetTokenInfo();
+
+            $responseArray = json_decode($response,1);
+
+            //判断请求是否发生错误
+            if(array_key_exists('msg',$responseArray)){
+                return json_encode(array('error'=>1,'msg'=>$responseArray['msg']));
+            }
+
+            $res = $responseArray['result'];
+
+            return json_encode(array('error'=>0,'msg'=>$res));
+        }
+
+    }
+
+
+    //GetTokenBalance
+    public function GetTokenBalance(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $userAddr = trim($request->input('uAddr'));
+        $tokenAddr = trim($request->input('tAddr'));
+
+        if (empty($userAddr)){
+            return json_encode(array('error'=>1,'msg'=>'userAddress is empty!'));
+        }
+
+        $paramLen = strlen($userAddr);
+        if($paramLen < 26 || $paramLen > 34){
+            return json_encode(array('error'=>1,'msg'=>'userAddress Format Error!'));
+        }
+
+        //如果tokenaddr存在
+        if ($tokenAddr){
+            $paramLen = strlen($tokenAddr);
+            if($paramLen < 26 || $paramLen > 34){
+                return json_encode(array('error'=>1,'msg'=>'tokenAddress Format Error!'));
+            }
+
+            $curlOperate = new CurlOperate();
+            $response = $curlOperate->GetTokenBalance($userAddr,$tokenAddr);
+
+            $responseArray = json_decode($response,1);
+
+            //判断请求是否发生错误
+            if(array_key_exists('msg',$responseArray)){
+                return json_encode(array('error'=>1,'msg'=>$responseArray['msg']));
+            }
+
+            $res = $responseArray['result'];
+
+            return json_encode(array('error'=>0,'msg'=>$res));
+        }else{
+            $curlOperate = new CurlOperate();
+            $response = $curlOperate->GetTokenBalance($userAddr);
+
+            $responseArray = json_decode($response,1);
+
+            //判断请求是否发生错误
+            if(array_key_exists('msg',$responseArray)){
+                return json_encode(array('error'=>1,'msg'=>$responseArray['msg']));
+            }
+
+            $res = $responseArray['result'];
+
+            return json_encode(array('error'=>0,'msg'=>$res));
+        }
+    }
+
+
+    //SetOwenToToken
+    public function SetOwenToToken(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $resTokenInfo = $this->GetTokenInfo($request);
+
+        $resArray = json_decode($resTokenInfo,1);
+
+        if($resArray["error"] != 0){
+            $msg =$resArray["msg"];
+            return json_encode(["error"=>1,"msg"=>$msg]);
+        }
+
+        $resMsg = $resArray["msg"];
+
+        $redis = new RedisOperate();
+
+        foreach ($resMsg as $v){
+            $ownerAddress = $v["ownerAddress"];
+            $tokenSymbol = $v["tokenSymbol"];
+
+            $redis->RedisRPush('ownerAddr-'.$ownerAddress,$tokenSymbol);
+        }
+
+    }
+
+
+    //SetTokenToOwen
+    public function SetTokenToOwen(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $resTokenInfo = $this->GetTokenInfo($request);
+
+        $resArray = json_decode($resTokenInfo,1);
+
+        if($resArray["error"] != 0){
+            $msg =$resArray["msg"];
+            return json_encode(["error"=>1,"msg"=>$msg]);
+        }
+
+        $resMsg = $resArray["msg"];
+
+        $redis = new RedisOperate();
+
+        foreach ($resMsg as $v){
+            $ownerAddress = $v["ownerAddress"];
+            $tokenSymbol = $v["tokenSymbol"];
+
+            $redis->RedisSet('token-'.$tokenSymbol,$ownerAddress);
+        }
+    }
+
+    //GetTokenOrOwner
+    public function GetTokenOrOwner(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $redis = new RedisOperate();
+
+        $ownPreFix = 'ownerAddr-';
+        $tokenPreFix = 'token-';
+
+        $param = $request->input('param');
+
+        if (empty($param)){
+            return json_encode(["error"=>1,"msg" => "param is empty!"]);
+        }
+
+        $ownExpire = $redis->RedisExist($ownPreFix.$param);
+        $tokenExpire = $redis->RedisExist($tokenPreFix.$param);
+
+        if ($ownExpire){
+            $res = $redis->RedisLRange($ownPreFix.$param);
+            return json_encode(["error"=>0,"msg" => array_unique($res)]);
+        }
+
+        if ($tokenExpire){
+            $res = $redis->RedisGet($tokenPreFix.$param);
+            return json_encode(["error"=>0,"msg" => $res]);
+        }
+
+        return json_encode(["error"=>1,"msg" => "ownerAddr and token is expire!"]);
+    }
+
+
+    //GetAddressName
+    public function GetAddressName(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $param = trim($request->input('param'));
+
+        $paramLen = strlen($param);
+        if($paramLen < 26 || $paramLen > 34){
+            return json_encode(array('error'=>1,'msg'=>'Addr Format Error!'));
+        }
+
+        $curlOperate = new CurlOperate();
+
+        $response = $curlOperate->GetAddressName($param);
+
+        $responseArray = json_decode($response,1);
+
+        //判断请求是否发生错误
+        if(array_key_exists('msg',$responseArray)){
+            return json_encode(array('error'=>1,'msg'=>$responseArray['msg']));
+        }
+
+        $res = $responseArray['result'];
+
+        if(empty($res)){
+            return json_encode(array('error'=>1,'msg'=>'Address has no registered name'));
+        }
+
+        return json_encode(array('error'=>0,'msg'=>$res));
+    }
+
+
+    //GetNameAddress
+    public function GetNameAddress(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $param = trim($request->input('param'));
+
+        $curlOperate = new CurlOperate();
+
+        $response = $curlOperate->GetNameAddress($param);
+
+        $responseArray = json_decode($response,1);
+
+        //判断请求是否发生错误
+        if(array_key_exists('msg',$responseArray)){
+            return json_encode(array('error'=>1,'msg'=>$responseArray['msg']));
+        }
+
+        $res = $responseArray['result'];
+
+        if(empty($res)){
+            return json_encode(array('error'=>1,'msg'=>'This name does not exist'));
+        }
+
+        return json_encode(array('error'=>0,'msg'=>$res));
+    }
+
+
+    //GetAddressTokenTxids
+    public function GetAddressTokenTxids(Request $request)
+    {
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:GET,POST");
+
+        $addr = trim($request->input('addr'));
+        if (empty($addr)){
+            return json_encode(array('error'=>1,'msg'=>'Addr is empty!'));
+        }
+
+        $addrLen = strlen($addr);
+        if($addrLen < 26 || $addrLen > 34){
+            return json_encode(array('error'=>1,'msg'=>'Addr Format Error!'));
+        }
+
+
+        $startBlock = trim($request->input('start'));
+        if (empty($startBlock)){
+            $startBlock = '0';
+        }
+
+        if (!is_numeric($startBlock)){
+            return json_encode(array('error'=>1,'msg'=>'StartBlock is not Num!'));
+        }
+
+        if ($startBlock < 0){
+            return json_encode(array('error'=>1,'msg'=>'StartBlock must >= 0!'));
+        }
+
+        $addrToken = trim($request->input('addrtoken'));
+
+        if ($addrToken){
+            $addrTokenLen = strlen($addrToken);
+            if($addrTokenLen < 26 || $addrTokenLen > 34){
+                return json_encode(array('error'=>1,'msg'=>'AddrTokenLen Format Error!'));
+            }
+        }
+
+        $curlOperate = new CurlOperate();
+
+        $response = $curlOperate->Getaddresstokentxids($addr,$startBlock,$addrToken);
+
+        $responseArray = json_decode($response,1);
+
+        //判断请求是否发生错误
+        if(array_key_exists('msg',$responseArray)){
+            return json_encode(array('error'=>1,'msg'=>$responseArray['msg']));
+        }
+
+        $res = $responseArray['result'];
+
+        if(empty($res)){
+            return json_encode(array('error'=>1,'msg'=>'This name does not exist'));
+        }
+
+        return json_encode(array('error'=>0,'msg'=>$res));
+    }
+
+
     //test
     public function test()
     {
