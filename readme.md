@@ -18,7 +18,7 @@ If you are using Linux, read the following:
 
 Premise:
 ```
-Make sure it is installed correctly: php, nginx, mysql, redis
+Make sure it is installed correctly: php, nginx, mysql, redis,Php redis extension
 wget http://soft.vpser.net/lnmp/lnmp1.5.tar.gz -cO lnmp1.5.tar.gz && tar zxf lnmp1.5.tar.gz && cd lnmp1.5 && ./install.sh lnmp
 ```
 
