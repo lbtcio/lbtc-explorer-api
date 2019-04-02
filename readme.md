@@ -36,7 +36,7 @@ curl http://your domain name/getblockinfo?param=4084230
 ```
 explorer api lbtc document
 ```
-https://github.com/lbtcio/lbtc-explorer-api/wiki/lbtc-explorer-api
+###https://github.com/lbtcio/lbtc-explorer-api/wiki/lbtc-explorer-api
 ```
 
 Author
