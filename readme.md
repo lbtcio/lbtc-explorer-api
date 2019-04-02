@@ -34,13 +34,13 @@ Access interface url
 ```
 curl http://your domain name/getblockinfo?param=4084230
 ```
+explorer lbtc document
+```
+explorer api document : https://github.com/lbtcio/lbtc-explorer-api/wiki/lbtc-explorer-api
+```
 
 Author
 ===============
 **wuhao**
 
 wuhao3306@gmail.com
-```
-explorer api document : https://github.com/lbtcio/lbtc-explorer-api/wiki/lbtc-explorer-api
-```
-
