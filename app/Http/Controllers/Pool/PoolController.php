@@ -395,7 +395,7 @@ class PoolController extends BaseController
 
         $redis = new RedisOperate();
 
-        $voteInfo = file_get_contents('http://172.31.239.200/getactive');
+        $voteInfo = file_get_contents('http://127.0.0.1/getactive');
 
         $voteInfoArray = json_decode($voteInfo,1);
 
