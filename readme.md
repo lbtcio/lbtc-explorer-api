@@ -9,13 +9,16 @@ lbtc-explorer-api is forked from [lumen](https://github.com/laravel/lumen) v5.2.
 
 
 
+
 Getting started
 ===============
+
 
 If you are using Linux, read the following:
 
 
 > **NOTE :  All the following command work well on Ubuntu 16.04**
+
 
 
 Premise:
