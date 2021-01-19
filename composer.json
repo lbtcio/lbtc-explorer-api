@@ -22,10 +22,13 @@
             "App\\": "app/"
         }
     },
+    
     "autoload-dev": {
         "classmap": [
             "tests/",
             "database/"
         ]
+        
     }
+    
 }
