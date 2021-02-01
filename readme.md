@@ -1,4 +1,5 @@
 lbtc-explorer-api
+
 =====================================
 
 
@@ -13,6 +14,7 @@ lbtc-explorer-api is forked from [lumen](https://github.com/laravel/lumen) v5.2.
 
 
 Getting started
+
 ===============
 
 
@@ -38,6 +40,7 @@ wget http://soft.vpser.net/lnmp/lnmp1.5.tar.gz -cO lnmp1.5.tar.gz && tar zxf lnm
 
 Check out the code from Github:
 ```
+
 git clone https://github.com/lbtcio/lbtc-explorer-api.git
 ```
 Set the nginx root path:
@@ -55,11 +58,8 @@ https://github.com/lbtcio/lbtc-explorer-api/wiki/lbtc-explorer-api
 
 
 Author
-
 ===============
 
 **wuhao**
-
-
 
 wuhao3306@gmail.com
