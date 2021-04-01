@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
          bootstrap="bootstrap/app.php"
@@ -31,6 +29,5 @@
         <env name="CACHE_DRIVER" value="array"/>
     </php>
      
-      
-         
+            
 </phpunit>
