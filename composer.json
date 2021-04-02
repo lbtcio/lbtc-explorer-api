@@ -1,6 +1,5 @@
 {
     
-    
     "name": "laravel/lumen",
     "description": "The Laravel Lumen Framework.",
     "keywords": ["framework", "laravel", "lumen"],
@@ -15,7 +14,6 @@
         "darkaonline/swagger-lume": "1.*"
     },
     
-    
    
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -28,7 +26,6 @@
             "App\\": "app/"
         }
     },
-    
     
     
     "autoload-dev": {
